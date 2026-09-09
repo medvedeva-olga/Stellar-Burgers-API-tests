@@ -1,0 +1,8 @@
+USER_SUCCESSFULLY_REMOVED_MESSAGE = 'User successfully removed'
+USER_ALREADY_EXISTS_ERROR = 'User already exists'
+USER_REGISTER_MISSING_FIELD_ERROR = 'Email, password and name are required fields'
+USER_LOGIN_INCORRECT_FIELD_ERROR = 'email or password are incorrect'
+USER_UPDATE_AUTHORIZATION_REQUIRED_ERROR = 'You should be authorised'
+USER_UPDATE_DUPLICATE_EMAIL_ERROR = 'User with such email already exists'
+ORDER_CREATE_NO_INGREDIENTS_ERROR = 'Ingredient ids must be provided'
+USER_ORDERS_GET_AUTHORIZATION_REQUIRED_ERROR = 'You should be authorised'
