@@ -1,6 +1,7 @@
 from api.user_api import UserApi
 from api.order_api import OrderApi
 from api.ingredients_api import IngredientApi
+from api.jsonplaceholder_api import JsonPlaceholderApi
 from helpers import generate_user_data
 import pytest 
 
@@ -15,6 +16,10 @@ def order_api():
 @pytest.fixture(scope='session')
 def ingredients_api():
     return IngredientApi()
+
+@pytest.fixture(scope='session')
+def public_api():
+    return JsonPlaceholderApi()
 
 @pytest.fixture
 def cleanup_user_data(user_api):
