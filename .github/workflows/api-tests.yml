@@ -41,7 +41,7 @@ jobs:
 
       - name: Run API tests
         run: |
-          pytest -v --no-cov --alluredir=allure_results --clean-alluredir
+          pytest -v --alluredir=allure_results --clean-alluredir
 
       - name: Install Allure CLI
         if: always()
