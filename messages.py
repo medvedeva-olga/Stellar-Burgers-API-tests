@@ -1,3 +1,5 @@
+USER_GET_AUTHORIZATION_REQUIRED_ERROR = "You should be authorised"
+USER_DELETE_AUTHORIZATION_REQUIRED_ERROR = "You should be authorised"
 USER_SUCCESSFULLY_REMOVED_MESSAGE = 'User successfully removed'
 USER_ALREADY_EXISTS_ERROR = 'User already exists'
 USER_REGISTER_MISSING_FIELD_ERROR = 'Email, password and name are required fields'

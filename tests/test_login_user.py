@@ -17,15 +17,16 @@ class TestLoginUser:
         response = user_api.login_user(payload)
         response_data = response.json()
 
-        assert response.status_code == 200
-        assert response_data["success"] is True
-        assert "accessToken" in response_data         
-        assert response_data["user"]["email"] == email
-        assert response_data["user"]["name"] == name 
+        assert response.status_code == 200, \
+            f"Ожидался статус 200, получен {response.status_code}: {response.text}"
+        assert response_data["success"] is True, "Флаг success не равен True"
+        assert "accessToken" in response_data, "В ответе отсутствует accessToken"         
+        assert response_data["user"]["email"] == email, "В ответе неверный email"
+        assert response_data["user"]["name"] == name, "В ответе неверный name" 
 
     @allure.title('Авторизация пользователя с неверным полем {incorrect_field} возвращает ошибку')
     @pytest.mark.parametrize('incorrect_field', ['email', 'password'])
-    def test_login_user_with_incorrect_field_returns_error(self, created_user, incorrect_field, user_api):
+    def test_login_user_with_incorrect_field_returns_401(self, created_user, incorrect_field, user_api):
         payload = {
             "email": created_user["email"],
             "password": created_user["password"]
@@ -34,6 +35,8 @@ class TestLoginUser:
         response = user_api.login_user(payload)
         response_data = response.json()
 
-        assert response.status_code == 401
-        assert response_data["success"] is False       
-        assert response_data["message"] == messages.USER_LOGIN_INCORRECT_FIELD_ERROR
+        assert response.status_code == 401, \
+            f"Ожидался статус 401, получен {response.status_code}: {response.text}"
+        assert response_data["success"] is False, "Флаг success не равен False"       
+        assert response_data["message"] == messages.USER_LOGIN_INCORRECT_FIELD_ERROR, \
+            "Неверное сообщение об ошибке"

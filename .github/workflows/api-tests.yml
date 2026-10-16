@@ -2,7 +2,7 @@ name: API Tests (pytest)
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, develop, develop2 ]
   pull_request:
     branches: [ main, develop ]
 
@@ -24,7 +24,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
 
       - name: Run API tests
         run: |
