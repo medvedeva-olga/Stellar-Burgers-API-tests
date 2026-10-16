@@ -1,51 +1,96 @@
-# 2 ЧАСТЬ ДИПЛОМНОГО ПРОЕКТА - проект по API тестированию 
+# API-тестирование Stellar Burgers
 
 ## Описание
-Тесты для API учебного сервиса ["Stellar Burgers"](https://stellarburgers.education-services.ru)
+Автоматизированные API-тесты для учебного сервиса [Stellar Burgers](https://stellarburgers.education-services.ru).
 
-## Технологии
-- Python 3.14
-- allure-pytest 2.16
+Тестируемая функциональность:
+- регистрация, авторизация, изменение и удаление пользователя;
+- создание и получение заказов;
+- работа с ингредиентами.
+
+## Стек технологий
+- Python 3.11+ (проект локально на 3.14)
 - pytest 9.0
 - requests 2.34
+- allure-pytest 2.16
+- Faker 40.28
 
-## Запуск тестов
-```bash
-pytest tests/ -v
+## Структура проекта
+```
+├── api/              # клиенты API
+├── tests/            # тесты по функционалу
+├── conftest.py       # фикстуры
+├── helpers.py        # вспомогательные функции
+├── messages.py       # сообщения об ошибках
+├── urls.py           # эндпоинты
+└── requirements.txt  # зависимости
 ```
 
-## Генерация Allure-отчёта:
+## Установка зависимостей
 ```bash
-pytest tests/ --alluredir=allure_results
+pip install -r requirements.txt
+```
+
+## Запуск тестов
+Запуск всех тестов:
+```bash
+pytest -v --no-cov
+```
+
+Запуск конкретного файла:
+```bash
+pytest tests/test_login_user.py -v --no-cov
+```
+
+Запуск с маркером (при наличии):
+```bash
+pytest -m smoke -v --no-cov
+```
+
+## Отчёт Allure
+Сбор результатов:
+```bash
+pytest tests/ --alluredir=allure_results --no-cov
+```
+
+Просмотр отчёта локально:
+```bash
 allure serve allure_results
 ```
 
-## Установка зависимостей:
-pip install -r requirements.txt
-
+## CI/CD
+В репозитории настроен GitHub Actions (`.github/workflows/api-tests.yml`), который автоматически запускает API-тесты при `push` и `pull_request` в ветки `main`, `develop`, `develop2`.
 
 ## Реализованные автотесты
 
-### Создание пользователя
-**test_register_new_user_success** - *Можно создать уникального пользователя*
-**test_register_duplicate_user_returns_error** - *Нельзя создать пользователя, который уже зарегистрирован*
-**test_register_user_without_required_field_returns_error** - *Нельзя создать пользователя и не заполнить одно из обязательных полей*
+### Регистрация пользователя
+- `test_register_new_user_success` — создание уникального пользователя
+- `test_register_duplicate_user_returns_error` — нельзя создать пользователя, который уже зарегистрирован
+- `test_register_user_without_required_field_returns_error` — нельзя создать пользователя без обязательного поля
 
-### Логин пользователя
-**test_login_registered_user_success** - *Зарегистрированный пользователь может успешно залогиниться*
-**test_login_user_with_incorrect_field_returns_error** - *Cистема вернёт ошибку, если при логине неправильно указать одно из полей*
+### Авторизация пользователя
+- `test_login_registered_user_success` — успешный логин зарегистрированного пользователя
+- `test_login_user_with_incorrect_field_returns_401` — ошибка при неверных логине/пароле
 
 ### Изменение данных пользователя
-**test_update_user_field_with_authorization_success** - *Изменение данных пользователя с авторизацией успешно*
-**test_update_user_field_with_authorization_returns_error** - *Изменение данных пользователя без авторизации возвращает ошибку*
-**test_update_user_with_duplicate_email_returns_error** - *Изменение почты пользователя на существующую возвращает ошибку*
+- `test_update_user_field_with_authorization_success` — обновление данных с авторизацией
+- `test_update_user_field_without_authorization_returns_401` — обновление без авторизации возвращает 401
+- `test_update_user_with_duplicate_email_returns_403` — нельзя изменить email на уже занятый
+
+### Получение данных пользователя
+- `test_get_user_with_authorization_success` — получение данных пользователя с авторизацией
+- `test_get_user_without_authorization_returns_401` — получение данных без авторизации
 
 ### Создание заказа
-**test_create_order_with_authorization_with_ingredients_success** - *Создание заказа с авторизацией и несколькими ингредиентами*
-**test_create_order_without_authorization_with_ingredients_success** - *Создание заказа без авторизации*
-**test_create_order_with_authorization_without_ingredients_returns_error** - *Создание заказа с пустым списком ингредиентов*
-**test_create_order_with_authorization_with_invalid_ingredient_returns_error** - *Создание заказа с невалидным хешом ингредиента возвращает ошибку*
+- `test_create_order_with_authorization_with_ingredients_success` — создание заказа с авторизацией и ингредиентами
+- `test_create_order_without_authorization_with_ingredients_success` — создание заказа без авторизации с ингредиентами
+- `test_create_order_with_authorization_without_ingredients_returns_400` — создание заказа без ингредиентов
+- `test_create_order_with_authorization_with_invalid_ingredient_returns_500` — создание заказа с невалидным хешем ингредиента
 
 ### Получение заказов пользователя
-**test_get_user_orders_returns_orders** - *Получение заказов пользователя возвращает список его заказов*
-**test_get_user_orders_without_authorization_returns_error** - *Получение заказов пользователя без токена авторизации возвращает ошибку*
+- `test_get_user_orders_with_authorization_returns_orders` — получение заказов авторизованного пользователя
+- `test_get_user_orders_without_authorization_returns_401` — получение заказов без авторизации
+
+### Удаление пользователя
+- `test_delete_user_without_token_returns_401` — удаление без токена
+- `test_delete_user_with_token_returns_202` — успешное удаление пользователя
