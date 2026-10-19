@@ -41,15 +41,15 @@ jobs:
           pytest -v -m ci --alluredir=allure_results --clean-alluredir
 
       - name: Install Allure CLI
-        if: always()
+        if: ${{ !cancelled() }}
         run: npm install -g allure-commandline
 
       - name: Generate Allure report
-        if: always()
+        if: ${{ !cancelled() }}
         run: allure generate allure_results -o allure-report --clean
 
       - name: Upload Allure results
-        if: always()
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v7
         with:
           name: allure-results
@@ -57,7 +57,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Upload Allure report
-        if: always()
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v7
         with:
           name: allure-report
@@ -67,7 +67,7 @@ jobs:
   deploy:
     name: Deploy Allure report
     needs: tests
-    if: always() && github.event_name == 'push'
+    if: ${{ !cancelled() && github.event_name == 'push' }}
     runs-on: ubuntu-latest
 
     environment:
