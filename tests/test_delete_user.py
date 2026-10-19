@@ -7,7 +7,7 @@ class TestDeleteUser:
 
     @allure.title("Удаление пользователя без токена возвращает 401")
     def test_delete_user_without_token_returns_401(self, user_api):
-        response = user_api.delete_user()
+        response = user_api.delete_user("")
         response_data = response.json()
 
         assert response.status_code == 401, \

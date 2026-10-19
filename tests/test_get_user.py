@@ -18,7 +18,7 @@ class TestGetUser:
 
     @allure.title("Получение данных пользователя без токена возвращает 401")
     def test_get_user_without_token_returns_401(self, user_api):
-        response = user_api.get_user()
+        response = user_api.get_user(None)
         response_data = response.json()
 
         assert response.status_code == 401, \

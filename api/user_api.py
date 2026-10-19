@@ -17,7 +17,7 @@ class UserApi:
         return requests.post(LOGOUT_USER_ENDPOINT, json=payload)
 
     @allure.step('Получить данные пользователя')    
-    def get_user_data(self, token):
+    def get_user(self, token):
         headers = {"Authorization": token}   
         return requests.get(USER_ENDPOINT, headers=headers)
     
@@ -30,3 +30,4 @@ class UserApi:
     def delete_user(self, token):
         headers = {"Authorization": token}   
         return requests.delete(USER_ENDPOINT, headers=headers)
+
