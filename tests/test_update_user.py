@@ -2,6 +2,7 @@ import pytest
 import allure
 import messages
 from helpers import generate_user_data
+from models import ErrorResponseModel, UserResponseModel
 
 
 class TestUpdateUser:
@@ -17,12 +18,12 @@ class TestUpdateUser:
         } 
         payload[field] = generate_user_data()[field]
         response = user_api.update_user(payload, access_token)
-        response_data = response.json()
+        updated = UserResponseModel.model_validate(response.json())
 
         assert response.status_code == 200
-        assert response_data["success"] is True       
-        assert response_data["user"]["email"] == payload['email']
-        assert response_data["user"]["name"] == payload['name'] 
+        assert updated.success is True
+        assert updated.user.email == payload['email']
+        assert updated.user.name == payload['name']
 
     @allure.title('Обновление поля {field} пользователя без авторизации возвращает ошибку')
     @pytest.mark.parametrize('field', ['email', 'password', 'name'])
@@ -34,11 +35,11 @@ class TestUpdateUser:
         } 
         payload[field] = generate_user_data()[field]
         response = user_api.update_user(payload)
-        response_data = response.json()
+        error = ErrorResponseModel.model_validate(response.json())
 
         assert response.status_code == 401
-        assert response_data["success"] is False       
-        assert response_data['message'] == messages.USER_UPDATE_AUTHORIZATION_REQUIRED_ERROR
+        assert error.success is False
+        assert error.message == messages.USER_UPDATE_AUTHORIZATION_REQUIRED_ERROR
 
     @allure.title('Изменение почты пользователя на существующую возвращает сообщение об ошибке')
     def test_update_user_with_duplicate_email_returns_error(self, created_user, created_user_2, user_api):
@@ -47,8 +48,8 @@ class TestUpdateUser:
             'email': created_user_2['email']
         } 
         response = user_api.update_user(payload, access_token)
-        response_data = response.json()
+        error = ErrorResponseModel.model_validate(response.json())
 
         assert response.status_code == 403
-        assert response_data["success"] is False       
-        assert response_data["message"] == messages.USER_UPDATE_DUPLICATE_EMAIL_ERROR 
+        assert error.success is False
+        assert error.message == messages.USER_UPDATE_DUPLICATE_EMAIL_ERROR

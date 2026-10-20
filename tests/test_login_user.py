@@ -1,6 +1,7 @@
 import pytest
 import allure
 import messages
+from models import AuthResponseModel, ErrorResponseModel
 
 
 class TestLoginUser:
@@ -15,14 +16,14 @@ class TestLoginUser:
             "password": password
         }
         response = user_api.login_user(payload)
-        response_data = response.json()
+        auth = AuthResponseModel.model_validate(response.json())
 
         assert response.status_code == 200, \
             f"Ожидался статус 200, получен {response.status_code}: {response.text}"
-        assert response_data["success"] is True, "Флаг success не равен True"
-        assert "accessToken" in response_data, "В ответе отсутствует accessToken"         
-        assert response_data["user"]["email"] == email, "В ответе неверный email"
-        assert response_data["user"]["name"] == name, "В ответе неверный name" 
+        assert auth.success is True, "Флаг success не равен True"
+        assert auth.accessToken, "В ответе отсутствует accessToken"
+        assert auth.user.email == email, "В ответе неверный email"
+        assert auth.user.name == name, "В ответе неверный name"
 
     @allure.title('Авторизация пользователя с неверным полем {incorrect_field} возвращает ошибку')
     @pytest.mark.parametrize('incorrect_field', ['email', 'password'])
@@ -33,10 +34,10 @@ class TestLoginUser:
         }
         payload[incorrect_field] += "a"
         response = user_api.login_user(payload)
-        response_data = response.json()
+        error = ErrorResponseModel.model_validate(response.json())
 
         assert response.status_code == 401, \
             f"Ожидался статус 401, получен {response.status_code}: {response.text}"
-        assert response_data["success"] is False, "Флаг success не равен False"       
-        assert response_data["message"] == messages.USER_LOGIN_INCORRECT_FIELD_ERROR, \
+        assert error.success is False, "Флаг success не равен False"
+        assert error.message == messages.USER_LOGIN_INCORRECT_FIELD_ERROR, \
             "Неверное сообщение об ошибке"

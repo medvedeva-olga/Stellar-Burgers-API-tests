@@ -1,5 +1,6 @@
 import allure
 import messages
+from models import CreateOrderResponseModel, ErrorResponseModel
 
 
 class TestCreateOrder:
@@ -10,15 +11,12 @@ class TestCreateOrder:
             "ingredients": ingredients
         }
         response = order_api.create_order(payload, created_user["accessToken"])
-        response_data = response.json()
+        created_order = CreateOrderResponseModel.model_validate(response.json())
 
         assert response.status_code == 200
-        assert response_data["success"] is True
-        assert "name" in response_data
-        assert "order" in response_data
-        assert "number" in response_data["order"]
-        assert isinstance(response_data["order"]["number"], int)
-        assert response_data["order"]["number"] > 0
+        assert created_order.success is True
+        assert created_order.name
+        assert created_order.order.number > 0
 
     @allure.title("Создание заказа неавторизованным пользователем с несколькими ингредиентами успешно")
     def test_create_order_without_authorization_with_ingredients_success(self, ingredients, order_api):
@@ -26,15 +24,12 @@ class TestCreateOrder:
             "ingredients": ingredients
         }
         response = order_api.create_order(payload)
-        response_data = response.json()
+        created_order = CreateOrderResponseModel.model_validate(response.json())
 
         assert response.status_code == 200
-        assert response_data["success"] is True
-        assert "name" in response_data
-        assert "order" in response_data
-        assert "number" in response_data["order"]
-        assert isinstance(response_data["order"]["number"], int)
-        assert response_data["order"]["number"] > 0
+        assert created_order.success is True
+        assert created_order.name
+        assert created_order.order.number > 0
 
     @allure.title("Создание заказа авторизованным пользователем с пустым списком ингредиентов возвращает ошибку")
     def test_create_order_with_authorization_without_ingredients_returns_error(self, created_user, order_api):
@@ -42,11 +37,11 @@ class TestCreateOrder:
             "ingredients": []
         }
         response = order_api.create_order(None, created_user["accessToken"])
-        response_data = response.json()
+        error = ErrorResponseModel.model_validate(response.json())
 
         assert response.status_code == 400
-        assert response_data["success"] is False
-        assert response_data["message"] == messages.ORDER_CREATE_NO_INGREDIENTS_ERROR
+        assert error.success is False
+        assert error.message == messages.ORDER_CREATE_NO_INGREDIENTS_ERROR
 
     @allure.title("Создание заказа авторизованным пользователем с невалидным хешом ингредиента возвращает ошибку")
     def test_create_order_with_authorization_with_invalid_ingredient_returns_error(self, created_user, ingredients, order_api):

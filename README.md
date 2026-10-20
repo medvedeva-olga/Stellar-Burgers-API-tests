@@ -14,10 +14,12 @@
 - requests 2.34
 - allure-pytest 2.16
 - Faker 40.28
+- pydantic 2.14
 
 ## Структура проекта
 ```
 ├── api/              # клиенты API
+├── models/           # Pydantic-модели ответов API
 ├── tests/            # тесты по функционалу
 ├── conftest.py       # фикстуры
 ├── helpers.py        # вспомогательные функции
@@ -46,6 +48,19 @@ pytest tests/test_login_user.py -v --no-cov
 ```bash
 pytest -m smoke -v --no-cov
 ```
+
+## Валидация схем ответов
+Структура JSON-ответов проверяется Pydantic-моделями из пакета `models/`:
+
+```python
+from models import UserResponseModel
+
+response = user_api.get_user(token)
+user_response = UserResponseModel.model_validate(response.json())
+```
+
+Если ответ не соответствует схеме, `model_validate` выбрасывает `ValidationError` и тест падает
+с указанием конкретного поля. Лишние поля в ответе игнорируются (`extra="ignore"`).
 
 ## Отчёт Allure
 Сбор результатов:
