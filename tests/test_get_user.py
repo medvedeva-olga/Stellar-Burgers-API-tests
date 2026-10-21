@@ -14,7 +14,7 @@ class TestGetUser:
 
         assert response.status_code == 200, \
             f"Ожидался статус 200, получен {response.status_code}: {response.text}"
-        assert user_response.success is False, "Флаг success не равен True"
+        assert user_response.success is True, "Флаг success не равен True"
         assert user_response.user.email == created_user["email"], "В ответе неверный email"
         assert user_response.user.name == created_user["name"], "В ответе неверное имя"
 
