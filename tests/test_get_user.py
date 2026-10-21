@@ -6,6 +6,7 @@ from models import ErrorResponseModel, UserResponseModel
 
 class TestGetUser:
 
+    @pytest.mark.ci
     @allure.title("Получение данных пользователя по токену возвращает 200")
     def test_get_user_with_token_returns_user_data(self, user_api, created_user):
         response = user_api.get_user(created_user["accessToken"])

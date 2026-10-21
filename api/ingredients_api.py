@@ -1,10 +1,11 @@
-import requests
 import allure
+
+from api.base_api import BaseApi
 from urls import INGREDIENTS_ENDPOINT
 
 
-class IngredientApi:
+class IngredientApi(BaseApi):
 
     @allure.step('Получить список ингредиентов')
     def get_ingredients(self):
-        return requests.get(INGREDIENTS_ENDPOINT)
+        return self.request('GET', INGREDIENTS_ENDPOINT)
