@@ -7,6 +7,7 @@ from models import AuthResponseModel, ErrorResponseModel
 
 class TestRegisterUser:
 
+    @pytest.mark.smoke
     @allure.title('Регистрация нового пользователя возвращает 200 и токен доступа')
     def test_register_new_user_returns_access_token(self, cleanup_user_data, user_api):
         payload = generate_user_data()

@@ -1,10 +1,12 @@
 import allure
+import pytest
 import messages
 from models import CreateOrderResponseModel, ErrorResponseModel
 
 
 class TestCreateOrder:
 
+    @pytest.mark.smoke
     @allure.title("Создание заказа авторизованным пользователем с несколькими ингредиентами успешно")
     def test_create_order_with_authorization_with_ingredients_success(self, created_user, ingredients, order_api):
         payload = {

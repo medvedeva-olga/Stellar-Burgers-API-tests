@@ -44,9 +44,14 @@ pytest -v --no-cov
 pytest tests/test_login_user.py -v --no-cov
 ```
 
-Запуск с маркером (при наличии):
+Запуск smoke-тестов (быстрая проверка ключевых сценариев):
 ```bash
 pytest -m smoke -v --no-cov
+```
+
+Проверить список зарегистрированных маркеров:
+```bash
+pytest --markers
 ```
 
 ## Валидация схем ответов

@@ -36,9 +36,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run API tests
+      # PR и push в develop/develop2 — быстрый smoke-набор.
+      - name: Run smoke tests
+        if: ${{ github.event_name == 'pull_request' || github.ref != 'refs/heads/main' }}
         run: |
-          pytest -v -m ci --alluredir=allure_results --clean-alluredir
+          pytest -v -m smoke --alluredir=allure_results --clean-alluredir
+
+      # Слияние в main — полный прогон.
+      - name: Run all tests
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        run: |
+          pytest -v --alluredir=allure_results --clean-alluredir
 
       - name: Install Allure CLI
         if: ${{ !cancelled() }}
@@ -67,7 +75,7 @@ jobs:
   deploy:
     name: Deploy Allure report
     needs: tests
-    if: ${{ !cancelled() && github.event_name == 'push' }}
+    if: ${{ !cancelled() && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
 
     environment:

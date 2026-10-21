@@ -6,7 +6,7 @@ from models import ErrorResponseModel, UserResponseModel
 
 class TestGetUser:
 
-    @pytest.mark.ci
+    @pytest.mark.smoke
     @allure.title("Получение данных пользователя по токену возвращает 200")
     def test_get_user_with_token_returns_user_data(self, user_api, created_user):
         response = user_api.get_user(created_user["accessToken"])
@@ -14,7 +14,7 @@ class TestGetUser:
 
         assert response.status_code == 200, \
             f"Ожидался статус 200, получен {response.status_code}: {response.text}"
-        assert user_response.success is False, "Флаг success не равен True"
+        assert user_response.success is True, "Флаг success не равен True"
         assert user_response.user.email == created_user["email"], "В ответе неверный email"
         assert user_response.user.name == created_user["name"], "В ответе неверное имя"
 

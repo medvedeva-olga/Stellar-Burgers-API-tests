@@ -6,6 +6,7 @@ from models import AuthResponseModel, ErrorResponseModel
 
 class TestLoginUser:
 
+    @pytest.mark.smoke
     @allure.title('Авторизация существующего пользователя возвращает ответ об успехе')
     def test_login_registered_user_success(self, created_user, user_api):
         email = created_user["email"]

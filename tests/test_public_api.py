@@ -6,7 +6,6 @@ from models import PostModel
 
 class TestPublicApi:
 
-    @pytest.mark.ci
     @allure.title('Получение поста из публичного API возвращает корректную схему ответа')
     def test_get_post_returns_post_with_expected_schema(self, public_api):
         # Given: в публичном API существует пост с id = 1
@@ -23,7 +22,6 @@ class TestPublicApi:
         assert post.id == 1, "В ответе неверный id поста"
         assert post.title, "Поле title пустое"
 
-    @pytest.mark.ci
     @allure.title('Создание поста в публичном API возвращает 201 и данные поста')
     def test_create_post_returns_created_post(self, public_api):
         # Given: подготовлены данные нового поста

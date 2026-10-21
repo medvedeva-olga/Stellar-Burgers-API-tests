@@ -1,9 +1,11 @@
 import allure
+import pytest
 import messages
 from models import ErrorResponseModel, UserOrdersResponseModel
 
 class TestGetUserOrders:
 
+    @pytest.mark.smoke
     @allure.title('Получение заказов пользователя возвращает список его заказов')
     def test_get_user_orders_returns_orders(self, created_user, created_user_orders, order_api):
         response = order_api.get_user_orders(created_user["accessToken"])
