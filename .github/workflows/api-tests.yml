@@ -37,16 +37,17 @@ jobs:
           pip install -r requirements.txt
 
       # PR и push в develop/develop2 — быстрый smoke-набор.
+      # -n 4: 4 vCPU у ubuntu-latest; больше воркеров смысла нет.
       - name: Run smoke tests
         if: ${{ github.event_name == 'pull_request' || github.ref != 'refs/heads/main' }}
         run: |
-          pytest -v -m smoke --alluredir=allure_results --clean-alluredir
+          pytest -v -m smoke -n 4 --alluredir=allure_results --clean-alluredir
 
       # Слияние в main — полный прогон.
       - name: Run all tests
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         run: |
-          pytest -v --alluredir=allure_results --clean-alluredir
+          pytest -v -n 4 --alluredir=allure_results --clean-alluredir
 
       - name: Install Allure CLI
         if: ${{ !cancelled() }}
